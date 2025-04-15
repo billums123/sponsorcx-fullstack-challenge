@@ -32,6 +32,11 @@ function seed() {
   db.prepare(`DELETE FROM accounts`).run();
   db.prepare(`DELETE FROM organizations`).run();
 
+  // Reset AUTOINCREMENT counters
+  db.prepare(`DELETE FROM sqlite_sequence WHERE name='deals'`).run();
+  db.prepare(`DELETE FROM sqlite_sequence WHERE name='accounts'`).run();
+  db.prepare(`DELETE FROM sqlite_sequence WHERE name='organizations'`).run();
+
   // sql statements
   const insertOrg = db.prepare(`INSERT INTO organizations (name) VALUES (?)`);
   const insertAccount = db.prepare(
