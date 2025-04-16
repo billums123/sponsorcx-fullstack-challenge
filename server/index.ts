@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import initializeDatabase from "./db";
 import dealsRouter from "./routes/dealsRouter";
+import organizationsRouter from "./routes/organizationsRouter";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,9 +18,13 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to the server! 🎉", rows });
 });
 
+// Organization Routes
+app.use("/api/organizations", organizationsRouter);
+
+// Deals Routes
 app.use("/api", dealsRouter);
 
-// catch all 404
+// Catch all 404
 app.use((req, res) => {
   res.status(404).json({
     error: "Not Found",
