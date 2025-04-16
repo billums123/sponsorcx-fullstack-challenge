@@ -16,7 +16,7 @@ const dealsController: DealsController = {
   getDealsForOrganization(req, res, next) {
     try {
       const { organizationId } = req.params;
-      const { status } = req.query;
+      const { status, year } = req.query;
 
       //   Check if the organization exists
       const orgCheckStmt = db.prepare(
@@ -35,6 +35,12 @@ const dealsController: DealsController = {
       if (status) {
         conditions.push("d.status = ?");
         parameters.push(status);
+      }
+
+      if (year) {
+        // Filter deals by the year portion of d.start_date
+        conditions.push("strftime('%Y', d.start_date) = ?");
+        parameters.push(year);
       }
 
       const getDealsStmt = db.prepare(
