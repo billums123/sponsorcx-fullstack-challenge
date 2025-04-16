@@ -17,7 +17,17 @@ const dealsController: DealsController = {
     try {
       const { organizationId } = req.params;
 
-      const stmt = db.prepare(
+      //   Check if the organization exists
+      const orgCheckStmt = db.prepare(
+        "SELECT * FROM organizations WHERE id = ?"
+      );
+      const organization = orgCheckStmt.get(organizationId);
+
+      if (!organization) {
+        return res.status(404).json({ error: "Organization not found" });
+      }
+
+      const getDealsStmt = db.prepare(
         `
         SELECT d.*, a.name as account_name 
         FROM deals d
@@ -27,7 +37,7 @@ const dealsController: DealsController = {
       );
 
       // Fetch all rows
-      const deals = stmt.all(organizationId);
+      const deals = getDealsStmt.all(organizationId);
 
       // Send the result as JSON
       return res.status(200).json({ deals });
