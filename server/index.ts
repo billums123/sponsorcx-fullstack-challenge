@@ -13,11 +13,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-  const rows = db.prepare("SELECT * FROM organizations").all();
-  res.json({ message: "Welcome to the server! 🎉", rows });
-});
-
 // Organization Routes
 app.use("/api/organizations", organizationsRouter);
 
