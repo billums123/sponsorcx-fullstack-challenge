@@ -1,3 +1,4 @@
+import { NextFunction, Request, Response } from "express";
 import express from "express";
 import cors from "cors";
 import initializeDatabase from "./db";
@@ -24,6 +25,16 @@ app.use((req, res) => {
   res.status(404).json({
     error: "Not Found",
     message: `The requested resource at ${req.originalUrl} was not found`,
+  });
+});
+
+// Global Error Handler
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error("Global error handler caught an error:", err);
+
+  const statusCode = err.status || 500;
+  res.status(statusCode).json({
+    error: err.message || "Internal server error",
   });
 });
 
