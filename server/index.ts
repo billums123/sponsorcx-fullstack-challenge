@@ -21,6 +21,13 @@ app.get("/", (req, res) => {
   const rows = db.prepare("SELECT * FROM organizations").all();
   res.json({ message: "Welcome to the server! 🎉", rows });
 });
+// catch all 404
+app.use((req, res) => {
+  res.status(404).json({
+    error: "Not Found",
+    message: `The requested resource at ${req.originalUrl} was not found`,
+  });
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
