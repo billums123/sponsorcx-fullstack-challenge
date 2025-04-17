@@ -14,6 +14,12 @@ import { fetchDeals } from "../api/deals";
 import { useFetch } from "../hooks/useFetch";
 import { Deal, DealStatus } from "../../../shared/types";
 
+// This was derived from looking at the values shown in the image shared in the README for a potential design pattern
+const DEAL_PROBABILITIES = {
+  [DealStatus.BUILD]: 0.2,
+  [DealStatus.PITCH]: 0.4,
+  [DealStatus.NEGOTIATION]: 0.6,
+};
 
 export default function DealsPage() {
   const [selectedOrgID, setSelectedOrgID] = useState<number | "">("");
@@ -36,7 +42,14 @@ export default function DealsPage() {
     return buckets;
   }, [deals]);
 
-  console.log("DEALS", grouped);
+  // Calculate total values for each group of deals
+  const totals: Record<DealStatus, number> = Object.fromEntries(
+    Object.entries(grouped).map(([status, list]) => [
+      status,
+      list.reduce((sum, d) => sum + d.value, 0),
+    ])
+  ) as Record<DealStatus, number>;
+
   return (
     <Container sx={{ py: 4 }}>
       {/* — Organization picker — */}
@@ -95,6 +108,39 @@ export default function DealsPage() {
               }}
             >
               <Typography fontWeight={600}>{label}</Typography>
+              <Box sx={{ display: "flex", alignItems: "center", columnGap: 1 }}>
+                {/* raw total */}
+                <Typography variant="body2" fontWeight={400}>
+                  {totals[status].toLocaleString(undefined, {
+                    style: "currency",
+                    currency: "USD",
+                    maximumFractionDigits: 0,
+                  })}
+                </Typography>
+
+                {/* vertical bar — stays inline now */}
+                <Box
+                  sx={{
+                    display: "inline-block",
+                    width: 0, // no horizontal space
+                    height: "1.4em",
+                    borderLeft: "2px solid",
+                    borderColor: "divider",
+                  }}
+                />
+
+                {/* weighted total */}
+                <Typography variant="body2" fontWeight={400}>
+                  {(totals[status] * DEAL_PROBABILITIES[status]).toLocaleString(
+                    undefined,
+                    {
+                      style: "currency",
+                      currency: "USD",
+                      maximumFractionDigits: 0,
+                    }
+                  )}
+                </Typography>
+              </Box>
             </Box>
 
             <Box
