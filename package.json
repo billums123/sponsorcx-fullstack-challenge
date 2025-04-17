@@ -1,0 +1,14 @@
+{
+  "name": "sponsorcx-assignment",
+  "description": "fullstack challenge root package.json meant to facilitate running application",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:frontend\"",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:server": "npm --prefix server run dev",
+    "seed": "npm --prefix server run seed",
+    "postinstall": "npm --prefix frontend install && npm --prefix server install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
