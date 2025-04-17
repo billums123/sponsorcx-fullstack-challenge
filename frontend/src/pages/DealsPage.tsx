@@ -50,6 +50,13 @@ export default function DealsPage() {
     ])
   ) as Record<DealStatus, number>;
 
+  // Calculate grand totals
+  const netTotal = Object.values(totals).reduce((s, v) => s + v, 0);
+  const probTotal = (Object.entries(totals) as [DealStatus, number][]).reduce(
+    (s, [status, v]) => s + v * DEAL_PROBABILITIES[status],
+    0
+  );
+
   return (
     <Container sx={{ py: 4 }}>
       {/* — Organization picker — */}
@@ -64,9 +71,25 @@ export default function DealsPage() {
       </Box>
       <Divider sx={{ my: 4 }} />
       {/* — Deals Section — */}
-      <Typography variant="h5" gutterBottom>
-        Deals
-      </Typography>
+      <Stack direction="row" alignItems="baseline" spacing={2} sx={{ mb: 1 }}>
+        <Typography variant="h5">Deals</Typography>
+
+        {/* Display Net Value | Probability Value total */}
+        <Typography variant="subtitle2" color="text.secondary" sx={{}}>
+          Net Value:{" "}
+          {netTotal.toLocaleString(undefined, {
+            style: "currency",
+            currency: "USD",
+          })}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Probability Value:&nbsp;
+          {probTotal.toLocaleString(undefined, {
+            style: "currency",
+            currency: "USD",
+            maximumFractionDigits: 0,
+          })}
+        </Typography>
+      </Stack>
+
       {!selectedOrgID && (
         <Alert severity="info">Choose an organization to see its deals.</Alert>
       )}
@@ -118,11 +141,11 @@ export default function DealsPage() {
                   })}
                 </Typography>
 
-                {/* vertical bar — stays inline now */}
+                {/* vertical bar */}
                 <Box
                   sx={{
                     display: "inline-block",
-                    width: 0, // no horizontal space
+                    width: 0,
                     height: "1.4em",
                     borderLeft: "2px solid",
                     borderColor: "divider",
