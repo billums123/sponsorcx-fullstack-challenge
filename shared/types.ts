@@ -23,6 +23,7 @@ export interface Deal {
   id: number;
   name: string;
   account_id: number;
+  account_name: string;
   start_date: string;
   end_date: string;
   value: number;
