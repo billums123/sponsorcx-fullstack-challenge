@@ -19,3 +19,51 @@
 ## Future Improvements
 
 ## Questions and Feedback
+
+## Additional Details
+
+### Database Structure
+
+The SQLite database contains 3 core tables:
+
+---
+
+#### `organizations`
+
+| Column     | Type     | Description                    |
+| ---------- | -------- | ------------------------------ |
+| id         | INTEGER  | Primary key (auto-incremented) |
+| name       | TEXT     | Organization name              |
+| created_at | DATETIME | Timestamp                      |
+| updated_at | DATETIME | Timestamp                      |
+
+---
+
+#### `accounts`
+
+| Column          | Type     | Description                       |
+| --------------- | -------- | --------------------------------- |
+| id              | INTEGER  | Primary key (auto-incremented)    |
+| name            | TEXT     | Account name                      |
+| organization_id | INTEGER  | Foreign key to `organizations.id` |
+| created_at      | DATETIME | Timestamp                         |
+| updated_at      | DATETIME | Timestamp                         |
+
+---
+
+#### `deals`
+
+| Column     | Type     | Description                                     |
+| ---------- | -------- | ----------------------------------------------- |
+| id         | INTEGER  | Primary key (auto-incremented)                  |
+| name       | TEXT     | Deal name                                       |
+| account_id | INTEGER  | Foreign key to `accounts.id`                    |
+| start_date | DATE     | Start date of the deal                          |
+| end_date   | DATE     | End date of the deal                            |
+| value      | REAL     | Monetary value of the deal                      |
+| status     | TEXT     | Deal status: `build`, `pitch`, or `negotiation` |
+| created_at | DATETIME | Timestamp                                       |
+| updated_at | DATETIME | Timestamp                                       |
+
+---
+
