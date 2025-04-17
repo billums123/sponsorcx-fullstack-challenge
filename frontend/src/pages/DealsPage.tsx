@@ -103,108 +103,111 @@ export default function DealsPage() {
         spacing={4}
         sx={{ width: "100%", alignItems: "flex-start" }}
       >
-        {(
-          [
-            [DealStatus.BUILD, "Build"],
-            [DealStatus.PITCH, "Pitch"],
-            [DealStatus.NEGOTIATION, "Negotiation"],
-          ] as const
-        ).map(([status, label]) => (
-          <Paper
-            key={status}
-            sx={{
-              flex: 1,
-              minWidth: 0,
-              maxHeight: "65vh",
-              display: "flex",
-              flexDirection: "column",
-            }}
-            elevation={4}
-          >
-            {/* Header for container */}
-            <Box
+        {deals &&
+          deals.length > 0 &&
+          (
+            [
+              [DealStatus.BUILD, "Build"],
+              [DealStatus.PITCH, "Pitch"],
+              [DealStatus.NEGOTIATION, "Negotiation"],
+            ] as const
+          ).map(([status, label]) => (
+            <Paper
+              key={status}
               sx={{
-                p: 1.5,
-                borderBottom: 1,
-                borderColor: "divider",
-                bgcolor: "secondary.dark",
+                flex: 1,
+                minWidth: 0,
+                maxHeight: "65vh",
+                display: "flex",
+                flexDirection: "column",
               }}
+              elevation={4}
             >
-              <Typography fontWeight={600}>{label}</Typography>
-              <Box sx={{ display: "flex", alignItems: "center", columnGap: 1 }}>
-                {/* raw total */}
-                <Typography variant="body2" fontWeight={400}>
-                  {totals[status].toLocaleString(undefined, {
-                    style: "currency",
-                    currency: "USD",
-                    maximumFractionDigits: 0,
-                  })}
-                </Typography>
-
-                {/* vertical bar */}
+              {/* Header for container */}
+              <Box
+                sx={{
+                  p: 1.5,
+                  borderBottom: 1,
+                  borderColor: "divider",
+                  bgcolor: "secondary.dark",
+                }}
+              >
+                <Typography fontWeight={600}>{label}</Typography>
                 <Box
-                  sx={{
-                    display: "inline-block",
-                    width: 0,
-                    height: "1.4em",
-                    borderLeft: "2px solid",
-                    borderColor: "divider",
-                  }}
-                />
-
-                {/* weighted total */}
-                <Typography variant="body2" fontWeight={400}>
-                  {(totals[status] * DEAL_PROBABILITIES[status]).toLocaleString(
-                    undefined,
-                    {
+                  sx={{ display: "flex", alignItems: "center", columnGap: 1 }}
+                >
+                  {/* raw total */}
+                  <Typography variant="body2" fontWeight={400}>
+                    {totals[status].toLocaleString(undefined, {
                       style: "currency",
                       currency: "USD",
                       maximumFractionDigits: 0,
-                    }
-                  )}
-                </Typography>
+                    })}
+                  </Typography>
+
+                  {/* vertical bar */}
+                  <Box
+                    sx={{
+                      display: "inline-block",
+                      width: 0,
+                      height: "1.4em",
+                      borderLeft: "2px solid",
+                      borderColor: "divider",
+                    }}
+                  />
+
+                  {/* weighted total */}
+                  <Typography variant="body2" fontWeight={400}>
+                    {(
+                      totals[status] * DEAL_PROBABILITIES[status]
+                    ).toLocaleString(undefined, {
+                      style: "currency",
+                      currency: "USD",
+                      maximumFractionDigits: 0,
+                    })}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
 
-            <Box
-              sx={{
-                overflowY: "auto",
-                p: 1.5,
-                flexGrow: 1,
-              }}
-            >
-              {grouped[status].map((d) => (
-                <Paper key={d.id} variant="outlined" sx={{ p: 1.5, mb: 1.5 }}>
-                  <Typography fontWeight={600}>{d.account_name}</Typography>
-                  <Typography variant="body2">{d.name}</Typography>
+              <Box
+                sx={{
+                  overflowY: "auto",
+                  p: 1.5,
+                  flexGrow: 1,
+                }}
+              >
+                {grouped[status].map((d) => (
+                  <Paper key={d.id} variant="outlined" sx={{ p: 1.5, mb: 1.5 }}>
+                    <Typography fontWeight={600}>{d.account_name}</Typography>
+                    <Typography variant="body2">{d.name}</Typography>
 
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <Typography variant="body2" color="text.secondary">
-                      {new Date(d.start_date).toLocaleDateString()} –{" "}
-                      {new Date(d.end_date).toLocaleDateString()}
-                    </Typography>
-                    <Typography fontWeight={700}>
-                      {d.value.toLocaleString(undefined, {
-                        style: "currency",
-                        currency: "USD",
-                      })}
-                    </Typography>
-                  </Stack>
-                </Paper>
-              ))}
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Typography variant="body2" color="text.secondary">
+                        {new Date(d.start_date).toLocaleDateString()} –{" "}
+                        {new Date(d.end_date).toLocaleDateString()}
+                      </Typography>
+                      <Typography fontWeight={700}>
+                        {d.value.toLocaleString(undefined, {
+                          style: "currency",
+                          currency: "USD",
+                        })}
+                      </Typography>
+                    </Stack>
+                  </Paper>
+                ))}
 
-              {grouped[status].length === 0 && (
-                <Typography variant="body2" color="text.secondary">
-                  No deals in {label.toLowerCase()}.
-                </Typography>
-              )}
-            </Box>
-          </Paper>
-        ))}
+                {grouped[status].length === 0 && (
+                  <Typography variant="body2" color="text.secondary">
+                    No deals in {label.toLowerCase()}.
+                  </Typography>
+                )}
+              </Box>
+            </Paper>
+          ))}
       </Stack>
     </Container>
   );
