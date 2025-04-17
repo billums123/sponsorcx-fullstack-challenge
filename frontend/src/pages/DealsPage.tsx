@@ -4,17 +4,18 @@ import {
   CircularProgress,
   Container,
   Divider,
-  IconButton,
   Paper,
   Stack,
   Typography,
 } from "@mui/material";
-import { FilterAlt as FilterAltIcon } from "@mui/icons-material";
 import { useMemo, useState } from "react";
 import OrganizationSelect from "../components/OrganizationSelect";
 import { fetchDeals } from "../api/deals";
 import { useFetch } from "../hooks/useFetch";
 import { Deal, DealStatus } from "../../../shared/types";
+import DealsFilter, {
+  DealsFilter as DealsFilterType,
+} from "../components/DealsFilter";
 
 // This was derived from looking at the values shown in the image shared in the README for a potential design pattern
 const DEAL_PROBABILITIES = {
@@ -25,11 +26,20 @@ const DEAL_PROBABILITIES = {
 
 export default function DealsPage() {
   const [selectedOrgID, setSelectedOrgID] = useState<number | "">("");
+  const [filter, setFilter] = useState<DealsFilterType>({
+    status: "",
+    year: "",
+  });
 
   const fetchDealsForOrg = useMemo(() => {
     return () =>
-      selectedOrgID ? fetchDeals(selectedOrgID) : Promise.resolve([]);
-  }, [selectedOrgID]);
+      selectedOrgID
+        ? fetchDeals(selectedOrgID, {
+            status: filter.status,
+            year: filter.year,
+          })
+        : Promise.resolve([]);
+  }, [selectedOrgID, filter]);
 
   const { data: deals = [], loading, error } = useFetch(fetchDealsForOrg);
 
@@ -75,7 +85,6 @@ export default function DealsPage() {
       {/* — Deals Section — */}
       <Stack direction="row" alignItems="baseline" spacing={2} sx={{ mb: 1 }}>
         <Typography variant="h5">Deals</Typography>
-
         {/* Display Net Value | Probability Value total */}
         <Typography variant="subtitle2" color="text.secondary" sx={{}}>
           Net Value:{" "}
@@ -93,9 +102,7 @@ export default function DealsPage() {
       </Stack>
 
       {/* Filter Button */}
-      <IconButton size="medium">
-        <FilterAltIcon fontSize="medium" />
-      </IconButton>
+      <DealsFilter value={filter} onChange={setFilter} />
 
       {!selectedOrgID && (
         <Alert severity="info">Choose an organization to see its deals.</Alert>
