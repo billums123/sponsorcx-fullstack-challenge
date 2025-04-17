@@ -101,128 +101,140 @@ export default function DealsPage() {
         </Typography>
       </Stack>
 
-      {/* Filter Button */}
-      <DealsFilter value={filter} onChange={setFilter} />
-
+      {/* Display message for user to provide more context */}
       {!selectedOrgID && (
         <Alert severity="info">Choose an organization to see its deals.</Alert>
       )}
+
+      {selectedOrgID && (
+        <>
+          {/* Filter Button - should shown anytime a selectedOrgID exists*/}
+          <DealsFilter value={filter} onChange={setFilter} />
+        </>
+      )}
+
       {loading && <CircularProgress />}
       {error && <Alert severity="error">{String(error)}</Alert>}
       {selectedOrgID && !loading && !error && deals?.length === 0 && (
         <Alert severity="warning">No deals found for this organization.</Alert>
       )}
-      <Stack
-        direction="row"
-        spacing={4}
-        sx={{ width: "100%", alignItems: "flex-start" }}
-      >
-        {deals &&
-          deals.length > 0 &&
-          (
-            [
-              [DealStatus.BUILD, "Build"],
-              [DealStatus.PITCH, "Pitch"],
-              [DealStatus.NEGOTIATION, "Negotiation"],
-            ] as const
-          ).map(([status, label]) => (
-            <Paper
-              key={status}
-              sx={{
-                flex: 1,
-                minWidth: 0,
-                maxHeight: "65vh",
-                display: "flex",
-                flexDirection: "column",
-              }}
-              elevation={4}
-            >
-              {/* Header for container */}
-              <Box
+      {deals && deals.length > 0 && !loading && !error && (
+        <>
+          <Stack
+            direction="row"
+            spacing={4}
+            sx={{ width: "100%", alignItems: "flex-start" }}
+          >
+            {(
+              [
+                [DealStatus.BUILD, "Build"],
+                [DealStatus.PITCH, "Pitch"],
+                [DealStatus.NEGOTIATION, "Negotiation"],
+              ] as const
+            ).map(([status, label]) => (
+              <Paper
+                key={status}
                 sx={{
-                  p: 1.5,
-                  borderBottom: 1,
-                  borderColor: "divider",
-                  bgcolor: "secondary.dark",
+                  flex: 1,
+                  minWidth: 0,
+                  maxHeight: "65vh",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
+                elevation={4}
               >
-                <Typography fontWeight={600}>{label}</Typography>
+                {/* Header for container */}
                 <Box
-                  sx={{ display: "flex", alignItems: "center", columnGap: 1 }}
+                  sx={{
+                    p: 1.5,
+                    borderBottom: 1,
+                    borderColor: "divider",
+                    bgcolor: "secondary.dark",
+                  }}
                 >
-                  {/* raw total */}
-                  <Typography variant="body2" fontWeight={400}>
-                    {totals[status].toLocaleString(undefined, {
-                      style: "currency",
-                      currency: "USD",
-                      maximumFractionDigits: 0,
-                    })}
-                  </Typography>
-
-                  {/* vertical bar */}
+                  <Typography fontWeight={600}>{label}</Typography>
                   <Box
-                    sx={{
-                      display: "inline-block",
-                      width: 0,
-                      height: "1.4em",
-                      borderLeft: "2px solid",
-                      borderColor: "divider",
-                    }}
-                  />
+                    sx={{ display: "flex", alignItems: "center", columnGap: 1 }}
+                  >
+                    {/* raw total */}
+                    <Typography variant="body2" fontWeight={400}>
+                      {totals[status].toLocaleString(undefined, {
+                        style: "currency",
+                        currency: "USD",
+                        maximumFractionDigits: 0,
+                      })}
+                    </Typography>
 
-                  {/* weighted total */}
-                  <Typography variant="body2" fontWeight={400}>
-                    {(
-                      totals[status] * DEAL_PROBABILITIES[status]
-                    ).toLocaleString(undefined, {
-                      style: "currency",
-                      currency: "USD",
-                      maximumFractionDigits: 0,
-                    })}
-                  </Typography>
+                    {/* vertical bar */}
+                    <Box
+                      sx={{
+                        display: "inline-block",
+                        width: 0,
+                        height: "1.4em",
+                        borderLeft: "2px solid",
+                        borderColor: "divider",
+                      }}
+                    />
+
+                    {/* weighted total */}
+                    <Typography variant="body2" fontWeight={400}>
+                      {(
+                        totals[status] * DEAL_PROBABILITIES[status]
+                      ).toLocaleString(undefined, {
+                        style: "currency",
+                        currency: "USD",
+                        maximumFractionDigits: 0,
+                      })}
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
 
-              <Box
-                sx={{
-                  overflowY: "auto",
-                  p: 1.5,
-                  flexGrow: 1,
-                }}
-              >
-                {grouped[status].map((d) => (
-                  <Paper key={d.id} variant="outlined" sx={{ p: 1.5, mb: 1.5 }}>
-                    <Typography fontWeight={600}>{d.account_name}</Typography>
-                    <Typography variant="body2">{d.name}</Typography>
-
-                    <Stack
-                      direction="row"
-                      justifyContent="space-between"
-                      alignItems="center"
+                <Box
+                  sx={{
+                    overflowY: "auto",
+                    p: 1.5,
+                    flexGrow: 1,
+                  }}
+                >
+                  {grouped[status].map((d) => (
+                    <Paper
+                      key={d.id}
+                      variant="outlined"
+                      sx={{ p: 1.5, mb: 1.5 }}
                     >
-                      <Typography variant="body2" color="text.secondary">
-                        {new Date(d.start_date).toLocaleDateString()} –{" "}
-                        {new Date(d.end_date).toLocaleDateString()}
-                      </Typography>
-                      <Typography fontWeight={700}>
-                        {d.value.toLocaleString(undefined, {
-                          style: "currency",
-                          currency: "USD",
-                        })}
-                      </Typography>
-                    </Stack>
-                  </Paper>
-                ))}
+                      <Typography fontWeight={600}>{d.account_name}</Typography>
+                      <Typography variant="body2">{d.name}</Typography>
 
-                {grouped[status].length === 0 && (
-                  <Typography variant="body2" color="text.secondary">
-                    No deals in {label.toLowerCase()}.
-                  </Typography>
-                )}
-              </Box>
-            </Paper>
-          ))}
-      </Stack>
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        <Typography variant="body2" color="text.secondary">
+                          {new Date(d.start_date).toLocaleDateString()} –{" "}
+                          {new Date(d.end_date).toLocaleDateString()}
+                        </Typography>
+                        <Typography fontWeight={700}>
+                          {d.value.toLocaleString(undefined, {
+                            style: "currency",
+                            currency: "USD",
+                          })}
+                        </Typography>
+                      </Stack>
+                    </Paper>
+                  ))}
+
+                  {grouped[status].length === 0 && (
+                    <Typography variant="body2" color="text.secondary">
+                      No deals in {label.toLowerCase()}.
+                    </Typography>
+                  )}
+                </Box>
+              </Paper>
+            ))}
+          </Stack>
+        </>
+      )}
     </Container>
   );
 }
