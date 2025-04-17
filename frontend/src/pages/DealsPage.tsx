@@ -4,10 +4,12 @@ import {
   CircularProgress,
   Container,
   Divider,
+  IconButton,
   Paper,
   Stack,
   Typography,
 } from "@mui/material";
+import { FilterAlt as FilterAltIcon } from "@mui/icons-material";
 import { useMemo, useState } from "react";
 import OrganizationSelect from "../components/OrganizationSelect";
 import { fetchDeals } from "../api/deals";
@@ -89,6 +91,11 @@ export default function DealsPage() {
           })}
         </Typography>
       </Stack>
+
+      {/* Filter Button */}
+      <IconButton size="medium">
+        <FilterAltIcon fontSize="medium" />
+      </IconButton>
 
       {!selectedOrgID && (
         <Alert severity="info">Choose an organization to see its deals.</Alert>
