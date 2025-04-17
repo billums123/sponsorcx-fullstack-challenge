@@ -67,3 +67,64 @@ The SQLite database contains 3 core tables:
 
 ---
 
+### API Endpoints
+
+#### `GET /api/organizations`
+
+Returns a list of all organizations.
+
+**Response Example:**
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Acme Corp",
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "name": "Globex Inc.",
+    "created_at": "2024-01-02T00:00:00.000Z",
+    "updated_at": "2024-01-02T00:00:00.000Z"
+  }
+]
+```
+
+---
+
+### `GET /api/organizations/:organizationId/deals`
+
+Returns all deals for a specific organization. Supports optional filtering by deal status and start year.
+
+**Query Parameters:**
+
+| Name   | Type   | Required | Description                                               |
+| ------ | ------ | -------- | --------------------------------------------------------- |
+| status | string | No       | Filter by deal status: `build`, `pitch`, or `negotiation` |
+| year   | string | No       | Filter by start year (e.g., `2024`)                       |
+
+**Example Request:**
+GET /api/organizations/1/deals?status=build&year=2024
+
+**Response Example:**
+
+```json
+{
+  "deals": [
+    {
+      "id": 101,
+      "name": "Summer Sponsorship",
+      "account_id": 10,
+      "account_name": "Nike",
+      "start_date": "2024-05-01",
+      "end_date": "2024-09-30",
+      "value": 150000,
+      "status": "build",
+      "created_at": "2024-04-01T12:00:00.000Z",
+      "updated_at": "2024-04-01T12:00:00.000Z"
+    }
+  ]
+}
+```
