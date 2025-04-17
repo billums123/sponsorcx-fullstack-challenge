@@ -128,6 +128,11 @@ export default function DealsPage() {
                 </Paper>
               ))}
 
+              {grouped[status].length === 0 && (
+                <Typography variant="body2" color="text.secondary">
+                  No deals in {label.toLowerCase()}.
+                </Typography>
+              )}
             </Box>
           </Paper>
         ))}
