@@ -14,6 +14,8 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import { useState } from "react";
 import { DealStatus } from "../../../shared/types";
 
+import { alpha, useTheme } from "@mui/material/styles";
+
 export interface DealsFilter {
   status: string;
   year: string;
@@ -25,9 +27,11 @@ interface DealsFilterProps {
 }
 
 export default function DealsFilter({ value, onChange }: DealsFilterProps) {
+  const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const [draft, setDraft] = useState<DealsFilter>(value);
+  const isFiltered = Boolean(value.status || value.year);
 
   const apply = () => {
     onChange(draft);
@@ -43,8 +47,20 @@ export default function DealsFilter({ value, onChange }: DealsFilterProps) {
 
   return (
     <>
-      <IconButton size="medium" onClick={(e) => setAnchorEl(e.currentTarget)}>
-        <FilterAltIcon fontSize="medium" />
+      <IconButton
+        size="medium"
+        onClick={(e) => setAnchorEl(e.currentTarget)}
+        sx={{
+          mb: 1,
+          bgcolor: isFiltered
+            ? alpha(theme.palette.primary.light, 0.1)
+            : "transparent",
+        }}
+      >
+        <FilterAltIcon
+          fontSize="medium"
+          color={isFiltered ? "primary" : "inherit"}
+        />
       </IconButton>
       <Popover
         open={open}
