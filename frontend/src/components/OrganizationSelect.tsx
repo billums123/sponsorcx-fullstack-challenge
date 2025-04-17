@@ -10,13 +10,13 @@ import { fetchOrganizations } from "../api/organizations";
 import type { Organization } from "../../../shared/types";
 
 interface OrganizationSelectProps {
-  selectedOrg: number | "";
+  selectedOrgID: number | "";
   onChange: (value: number) => void;
 }
 
 // Dropdown that lists every organization in the DB
 export default function OrganizationSelect({
-  selectedOrg,
+  selectedOrgID,
   onChange,
 }: OrganizationSelectProps) {
   const { data: orgs, loading, error } = useFetch(fetchOrganizations);
@@ -30,7 +30,7 @@ export default function OrganizationSelect({
       <InputLabel id="org-label">Organization</InputLabel>
       <Select
         labelId="org-label"
-        value={String(selectedOrg)}
+        value={String(selectedOrgID)}
         label="Organization"
         onChange={handleChangeSelect}
         disabled={loading || !!error}
