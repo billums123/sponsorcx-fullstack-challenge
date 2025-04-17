@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export function useFetch<T>(fn: () => Promise<T>) {
   const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState<unknown>(null);
+  const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,7 +13,9 @@ export function useFetch<T>(fn: () => Promise<T>) {
         const d = await fn();
         if (!cancelled) setData(d);
       } catch (e) {
-        if (!cancelled) setError(e);
+        if (!cancelled) {
+          setError(e instanceof Error ? e : new Error(String(e)));
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
