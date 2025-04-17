@@ -2,20 +2,25 @@ import initializeDatabase from "./db";
 import { faker } from "@faker-js/faker";
 import { DealStatus } from "../shared/types";
 
-// Default values for seeding script **ADJUST AS NEEDED**
+// -----------------------------------------------------------------------
+// --- ADJUST THESE VALUES AS NEEDED TO CHANGE HOW YOUR DB IS SEEDED ---
+// -----------------------------------------------------------------------
 // organizations
-const MIN_ORGS = 2;
-const MAX_ORGS = 10;
+const MIN_ORGS = 3;
+const MAX_ORGS = 10; //Must be a value larger than MIN_ORGS
 
 // accounts
 const MIN_ACCOUNTS = 1;
-const MAX_ACCOUNTS = 5;
+const MAX_ACCOUNTS = 5; //Must be a value larger than MIN_ACCOUNTS
 
 // deals
-const MIN_DEALS = 1;
-const MAX_DEALS = 3;
+const MIN_DEALS = 5;
+const MAX_DEALS = 20; //Must be a value larger than MIN_DEALS
 const MIN_DEAL_VALUE = 100;
-const MAX_DEAL_VALUE = 1000000;
+const MAX_DEAL_VALUE = 1000000; //Must be a value larger than MIN_DEAL_VALUE
+const MIN_START_YEAR = 2002;
+const MAX_END_YEAR = 2030; //Must be a value larger than MIN_START_YEAR
+// -----------------------------------------------------------------------
 
 const db = initializeDatabase();
 
@@ -65,10 +70,13 @@ function seed() {
       const numDeals = faker.number.int({ min: MIN_DEALS, max: MAX_DEALS });
       for (let d = 0; d < numDeals; d++) {
         const start = faker.date.between({
-          from: "2022-01-01",
-          to: "2025-01-01",
+          from: `${MIN_START_YEAR}-01-01`,
+          to: `${MAX_END_YEAR - 1}-01-01`,
         });
-        const end = faker.date.between({ from: start, to: "2026-12-31" });
+        const end = faker.date.between({
+          from: start,
+          to: `${MAX_END_YEAR}-01-01`,
+        });
 
         insertDeal.run(
           faker.commerce.productName() + " Deal",
