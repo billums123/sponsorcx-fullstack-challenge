@@ -20,7 +20,19 @@ export default function DealsPage() {
   }, [selectedOrgID]);
 
   const { data: deals = [], loading, error } = useFetch(fetchDealsForOrg);
-  // console.log("DEALS", deals);
+
+  // Group deals by deal status
+  const grouped = useMemo(() => {
+    const buckets: Record<DealStatus, Deal[]> = {
+      [DealStatus.BUILD]: [],
+      [DealStatus.PITCH]: [],
+      [DealStatus.NEGOTIATION]: [],
+    };
+    deals?.forEach((d) => buckets[d.status].push(d));
+    return buckets;
+  }, [deals]);
+
+  console.log("DEALS", grouped);
   return (
     <Container sx={{ py: 4 }}>
       {/* — Organization picker — */}
